@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const int MAX_ENTIDADES = 3;
+const int MAX_ENTIDADES = 5;
 
 class Persona {
 protected:
@@ -236,10 +236,10 @@ string generarEmail(string nombre, string apellido) {
     return nombre + "." + apellido + "@correo.com";
 }
 
-void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros);
+void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool datosLlenados);
 void menuBusquedas();
 
-void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros) {
+void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool& datosLlenados) {
     char opcion;
 
     do {
@@ -256,12 +256,19 @@ void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gest
             gestoraLibros.llenado();
             gestoraUsuarios.llenado();
             gestoraBibliotecarios.llenado();
+            datosLlenados = true; // Los datos han sido llenados
             break;
         case '2':
-            menuListados(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros);
+            if (datosLlenados)
+                menuListados(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros, datosLlenados);
+            else
+                cout << "Primero debe llenar los datos (opción 1).\n";
             break;
         case '3':
-            menuBusquedas();
+            if (datosLlenados)
+                menuBusquedas();
+            else
+                cout << "Primero debe llenar los datos (opción 1).\n";
             break;
         case '0':
             cout << "Saliendo...\n";
@@ -273,7 +280,7 @@ void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gest
     } while (opcion != '0');
 }
 
-void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros) {
+void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool datosLlenados) {
     char opcion;
 
     do {
@@ -359,8 +366,9 @@ int main() {
     GestoraUsuarios gestoraUsuarios;
     GestoraBibliotecarios gestoraBibliotecarios;
     GestoraLibros gestoraLibros;
+    bool datosLlenados = false;
 
-    menuPrincipal(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros);
+    menuPrincipal(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros, datosLlenados);
 
     return 0;
 }
