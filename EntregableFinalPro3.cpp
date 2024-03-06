@@ -74,10 +74,10 @@ public:
         cout << endl;
     }
     
-    Usuario obtenerUsuario(int indice) {
-        return usuarios[indice];
+    Usuario* obtenerUsuarios() {
+        return usuarios;
     }
-
+    
     int obtenerNumeroUsuarios() const {
         return numUsuarios;
     }
@@ -133,11 +133,11 @@ public:
         }
         cout << endl;
     }
-
-    Bibliotecario obtenerBibliotecario(int indice) {
-        return bibliotecarios[indice];
+    
+    Bibliotecario* obtenerBibliotecarios() {
+        return bibliotecarios;
     }
-
+    
     int obtenerNumeroBibliotecarios() const {
         return numBibliotecarios;
     }
@@ -198,11 +198,11 @@ public:
         }
         cout << endl;
     }
-
-    Libro obtenerLibro(int indice) {
-        return libros[indice];
+    
+    Libro* obtenerLibros() {
+        return libros;
     }
-
+    
     int obtenerNumeroLibros() const {
         return numLibros;
     }
@@ -216,9 +216,59 @@ string generarEmail(string nombre, string apellido) {
     return nombre + "." + apellido + "@correo.com";
 }
 
+void imprimirListadoTabla(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros) {
+    cout << "--- Listado en Tabla ---\n";
+    cout << "Usuarios:\n";
+    cout << "ID\tNombre\tApellido\tEmail\tFecha de Registro\n";
+    Usuario* usuarios = gestoraUsuarios->obtenerUsuarios();
+    for (int i = 0; i < gestoraUsuarios->obtenerNumeroUsuarios(); ++i) {
+        cout << usuarios[i].obtenerID() << "\t" << usuarios[i].obtenerNombre() << "\t" << usuarios[i].obtenerApellido() << "\t" << usuarios[i].obtenerEmail() << "\t" << usuarios[i].obtenerFechaRegistro() << endl;
+    }
+    cout << "\nBibliotecarios:\n";
+    cout << "ID\tNombre\tApellido\tEmail\tCargo\n";
+    Bibliotecario* bibliotecarios = gestoraBibliotecarios->obtenerBibliotecarios();
+    for (int i = 0; i < gestoraBibliotecarios->obtenerNumeroBibliotecarios(); ++i) {
+        cout << bibliotecarios[i].obtenerID() << "\t" << bibliotecarios[i].obtenerNombre() << "\t" << bibliotecarios[i].obtenerApellido() << "\t" << bibliotecarios[i].obtenerEmail() << "\t" << bibliotecarios[i].obtenerCargo() << endl;
+    }
+    cout << "\nLibros:\n";
+    cout << "Título\tAutor\tISBN\tAño\n";
+    Libro* libros = gestoraLibros->obtenerLibros();
+    for (int i = 0; i < gestoraLibros->obtenerNumeroLibros(); ++i) {
+        cout << libros[i].obtenerTitulo() << "\t" << libros[i].obtenerAutor() << "\t" << libros[i].obtenerISBN() << "\t" << libros[i].obtenerAnio() << endl;
+    }
+}
+
+void imprimirListadoBloque(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros) {
+    cout << "--- Listado en Bloque ---\n";
+    cout << "Usuarios:\n";
+    Usuario* usuarios = gestoraUsuarios->obtenerUsuarios();
+    for (int i = 0; i < gestoraUsuarios->obtenerNumeroUsuarios(); ++i) {
+        cout << "ID: " << usuarios[i].obtenerID() << endl;
+        cout << "Nombre: " << usuarios[i].obtenerNombre() << " " << usuarios[i].obtenerApellido() << endl;
+        cout << "Email: " << usuarios[i].obtenerEmail() << endl;
+        cout << "Fecha de Registro: " << usuarios[i].obtenerFechaRegistro() << endl << endl;
+    }
+    cout << "Bibliotecarios:\n";
+    Bibliotecario* bibliotecarios = gestoraBibliotecarios->obtenerBibliotecarios();
+    for (int i = 0; i < gestoraBibliotecarios->obtenerNumeroBibliotecarios(); ++i) {
+        cout << "ID: " << bibliotecarios[i].obtenerID() << endl;
+        cout << "Nombre: " << bibliotecarios[i].obtenerNombre() << " " << bibliotecarios[i].obtenerApellido() << endl;
+        cout << "Email: " << bibliotecarios[i].obtenerEmail() << endl;
+        cout << "Cargo: " << bibliotecarios[i].obtenerCargo() << endl << endl;
+    }
+    cout << "Libros:\n";
+    Libro* libros = gestoraLibros->obtenerLibros();
+    for (int i = 0; i < gestoraLibros->obtenerNumeroLibros(); ++i) {
+        cout << "Título: " << libros[i].obtenerTitulo() << endl;
+        cout << "Autor: " << libros[i].obtenerAutor() << endl;
+        cout << "ISBN: " << libros[i].obtenerISBN() << endl;
+        cout << "Año: " << libros[i].obtenerAnio() << endl << endl;
+    }
+}
+
 void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool datosLlenados);
-void imprimirListadoTabla(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros);
-void imprimirListadoBloque(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros);
+void imprimirListadoTabla(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros);
+void imprimirListadoBloque(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros);
 
 void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros) {
     char opcion;
@@ -289,9 +339,9 @@ void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gesto
                 cout << "¿Cómo desea imprimir los listados? (T para tabla, B para bloque): ";
                 cin >> imprimirOpcion;
                 if (toLowerCase(imprimirOpcion) == 't')
-                    imprimirListadoTabla(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros);
+                    imprimirListadoTabla(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
                 else if (toLowerCase(imprimirOpcion) == 'b')
-                    imprimirListadoBloque(gestoraUsuarios, gestoraBibliotecarios, gestoraLibros);
+                    imprimirListadoBloque(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
                 else
                     cout << "Opción no válida.\n";
             } else {
@@ -306,56 +356,6 @@ void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gesto
             break;
         }
     } while (opcion != '0');
-}
-
-void imprimirListadoTabla(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros) {
-    cout << "--- Listado en Tabla ---\n";
-    cout << "Usuarios:\n";
-    cout << "ID\tNombre\tApellido\tEmail\tFecha de Registro\n";
-    for (int i = 0; i < gestoraUsuarios.obtenerNumeroUsuarios(); ++i) {
-        Usuario usuario = gestoraUsuarios.obtenerUsuario(i);
-        cout << usuario.obtenerID() << "\t" << usuario.obtenerNombre() << "\t" << usuario.obtenerApellido() << "\t" << usuario.obtenerEmail() << "\t" << usuario.obtenerFechaRegistro() << endl;
-    }
-    cout << "\nBibliotecarios:\n";
-    cout << "ID\tNombre\tApellido\tEmail\tCargo\n";
-    for (int i = 0; i < gestoraBibliotecarios.obtenerNumeroBibliotecarios(); ++i) {
-        Bibliotecario bibliotecario = gestoraBibliotecarios.obtenerBibliotecario(i);
-        cout << bibliotecario.obtenerID() << "\t" << bibliotecario.obtenerNombre() << "\t" << bibliotecario.obtenerApellido() << "\t" << bibliotecario.obtenerEmail() << "\t" << bibliotecario.obtenerCargo() << endl;
-    }
-    cout << "\nLibros:\n";
-    cout << "Título\tAutor\tISBN\tAño\n";
-    for (int i = 0; i < gestoraLibros.obtenerNumeroLibros(); ++i) {
-        Libro libro = gestoraLibros.obtenerLibro(i);
-        cout << libro.obtenerTitulo() << "\t" << libro.obtenerAutor() << "\t" << libro.obtenerISBN() << "\t" << libro.obtenerAnio() << endl;
-    }
-}
-
-void imprimirListadoBloque(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros) {
-    cout << "--- Listado en Bloque ---\n";
-    cout << "Usuarios:\n";
-    for (int i = 0; i < gestoraUsuarios.obtenerNumeroUsuarios(); ++i) {
-        Usuario usuario = gestoraUsuarios.obtenerUsuario(i);
-        cout << "ID: " << usuario.obtenerID() << endl;
-        cout << "Nombre: " << usuario.obtenerNombre() << " " << usuario.obtenerApellido() << endl;
-        cout << "Email: " << usuario.obtenerEmail() << endl;
-        cout << "Fecha de Registro: " << usuario.obtenerFechaRegistro() << endl << endl;
-    }
-    cout << "Bibliotecarios:\n";
-    for (int i = 0; i < gestoraBibliotecarios.obtenerNumeroBibliotecarios(); ++i) {
-        Bibliotecario bibliotecario = gestoraBibliotecarios.obtenerBibliotecario(i);
-        cout << "ID: " << bibliotecario.obtenerID() << endl;
-        cout << "Nombre: " << bibliotecario.obtenerNombre() << " " << bibliotecario.obtenerApellido() << endl;
-        cout << "Email: " << bibliotecario.obtenerEmail() << endl;
-        cout << "Cargo: " << bibliotecario.obtenerCargo() << endl << endl;
-    }
-    cout << "Libros:\n";
-    for (int i = 0; i < gestoraLibros.obtenerNumeroLibros(); ++i) {
-        Libro libro = gestoraLibros.obtenerLibro(i);
-        cout << "Título: " << libro.obtenerTitulo() << endl;
-        cout << "Autor: " << libro.obtenerAutor() << endl;
-        cout << "ISBN: " << libro.obtenerISBN() << endl;
-        cout << "Año: " << libro.obtenerAnio() << endl << endl;
-    }
 }
 
 int main() {
