@@ -266,6 +266,42 @@ void imprimirListadoBloque(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecari
     }
 }
 
+void buscarUsuariosPorNombre(GestoraUsuarios& gestoraUsuarios) {
+    string nombreBusqueda;
+    cout << "Ingrese el nombre del usuario a buscar: ";
+    cin >> nombreBusqueda;
+    
+    cout << "--- Resultados de la búsqueda por nombre ---\n";
+    Usuario* usuarios = gestoraUsuarios.obtenerUsuarios();
+    bool encontrado = false;
+    for (int i = 0; i < gestoraUsuarios.obtenerNumeroUsuarios(); ++i) {
+        if (usuarios[i].obtenerNombre() == nombreBusqueda) {
+            cout << "ID: " << usuarios[i].obtenerID() << ", Nombre: " << usuarios[i].obtenerNombre() << " " << usuarios[i].obtenerApellido() << ", Email: " << usuarios[i].obtenerEmail() << ", Fecha de Registro: " << usuarios[i].obtenerFechaRegistro() << endl;
+            encontrado = true;
+        }
+    }
+    if (!encontrado)
+        cout << "No se encontraron usuarios con ese nombre.\n";
+}
+
+void buscarBibliotecariosPorCargo(GestoraBibliotecarios& gestoraBibliotecarios) {
+    string cargoBusqueda;
+    cout << "Ingrese el cargo del bibliotecario a buscar: ";
+    cin >> cargoBusqueda;
+    
+    cout << "--- Resultados de la búsqueda por cargo ---\n";
+    Bibliotecario* bibliotecarios = gestoraBibliotecarios.obtenerBibliotecarios();
+    bool encontrado = false;
+    for (int i = 0; i < gestoraBibliotecarios.obtenerNumeroBibliotecarios(); ++i) {
+        if (bibliotecarios[i].obtenerCargo() == cargoBusqueda) {
+            cout << "ID: " << bibliotecarios[i].obtenerID() << ", Nombre: " << bibliotecarios[i].obtenerNombre() << " " << bibliotecarios[i].obtenerApellido() << ", Email: " << bibliotecarios[i].obtenerEmail() << ", Cargo: " << bibliotecarios[i].obtenerCargo() << endl;
+            encontrado = true;
+        }
+    }
+    if (!encontrado)
+        cout << "No se encontraron bibliotecarios con ese cargo.\n";
+}
+
 void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool datosLlenados);
 void imprimirListadoTabla(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros);
 void imprimirListadoBloque(GestoraUsuarios* gestoraUsuarios, GestoraBibliotecarios* gestoraBibliotecarios, GestoraLibros* gestoraLibros);
@@ -298,7 +334,27 @@ void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gest
                 cout << "Por favor, primero llene los datos (opción 1).\n";
             break;
         case '3':
-            // Lógica para el menú de búsquedas
+            char tipoBusqueda;
+            cout << "\n--- MENÚ BÚSQUEDAS ---\n";
+            cout << "A) Buscar usuarios por nombre.\n";
+            cout << "B) Buscar bibliotecarios por cargo.\n";
+            cout << "0) Volver al menú principal.\n";
+            cout << "Seleccione una opción: ";
+            cin >> tipoBusqueda;
+            switch (toLowerCase(tipoBusqueda)) {
+                case 'a':
+                    buscarUsuariosPorNombre(gestoraUsuarios);
+                    break;
+                case 'b':
+                    buscarBibliotecariosPorCargo(gestoraBibliotecarios);
+                    break;
+                case '0':
+                    cout << "Volviendo al menú principal...\n";
+                    break;
+                default:
+                    cout << "Opción no válida. Por favor, seleccione una opción válida.\n";
+                    break;
+            }
             break;
         case '0':
             cout << "Saliendo...\n";
@@ -307,46 +363,30 @@ void menuPrincipal(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gest
             cout << "Opción no válida. Por favor, seleccione una opción válida.\n";
             break;
         }
-    } while (opcion != '0');
+     } while (opcion != '0');
+
 }
 
 void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gestoraBibliotecarios, GestoraLibros& gestoraLibros, bool datosLlenados) {
-    char opcion;
+    if (!datosLlenados) {
+        cout << "Por favor, primero llene los datos (opción 1 en el menú principal).\n";
+        return;
+    }
     
-    do {
-        cout << "\n--- SUBMENÚ LISTADOS ---\n";
-        cout << "A) Listado de Libros.\n";
-        cout << "B) Listado Usuarios.\n";
-        cout << "C) Listado Bibliotecarios.\n";
-        cout << "D) Imprimir en tabla o bloque.\n";
-        cout << "0) Volver al menú principal.\n";
-        cout << "Seleccione una opción: ";
-        cin >> opcion;
-        
-        switch (toLowerCase(opcion)) {
-        case 'a':
-            gestoraLibros.listado();
+    char tipoListado;
+    cout << "\n--- MENÚ LISTADOS ---\n";
+    cout << "1) Listado en tabla.\n";
+    cout << "2) Listado en bloque.\n";
+    cout << "0) Volver al menú principal.\n";
+    cout << "Seleccione una opción: ";
+    cin >> tipoListado;
+    
+    switch (toLowerCase(tipoListado)) {
+        case '1':
+            imprimirListadoTabla(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
             break;
-        case 'b':
-            gestoraUsuarios.listado();
-            break;
-        case 'c':
-            gestoraBibliotecarios.listado();
-            break;
-        case 'd':
-            if (datosLlenados) {
-                char imprimirOpcion;
-                cout << "¿Cómo desea imprimir los listados? (T para tabla, B para bloque): ";
-                cin >> imprimirOpcion;
-                if (toLowerCase(imprimirOpcion) == 't')
-                    imprimirListadoTabla(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
-                else if (toLowerCase(imprimirOpcion) == 'b')
-                    imprimirListadoBloque(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
-                else
-                    cout << "Opción no válida.\n";
-            } else {
-                cout << "Por favor, primero llene los datos (opción 1).\n";
-            }
+        case '2':
+            imprimirListadoBloque(&gestoraUsuarios, &gestoraBibliotecarios, &gestoraLibros);
             break;
         case '0':
             cout << "Volviendo al menú principal...\n";
@@ -354,8 +394,7 @@ void menuListados(GestoraUsuarios& gestoraUsuarios, GestoraBibliotecarios& gesto
         default:
             cout << "Opción no válida. Por favor, seleccione una opción válida.\n";
             break;
-        }
-    } while (opcion != '0');
+    }
 }
 
 int main() {
